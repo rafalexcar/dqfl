@@ -26,11 +26,19 @@ clientapp = "dqfl.client_app:app"
 
 [tool.flwr.app.config]
 num-server-rounds = 3
-fraction-fit = 0.5 #percentage of clients sampled in each round
+fraction-fit = 1.0 # Percentage of clients sampled in each round
 local-epochs = 1
+alpha = 0.3
+class_balance = 0.0
+num_examples = 1.0 # Standard configuration corresponds to FedAvg
+num_classes = 0.0
+avg_mi = 0.0
+feature_accuracy = 0.0
+label_distribution_balance = 0.0
+avg_ffi= 0.0
 
 [tool.flwr.federations]
 default = "local-simulation"
 
 [tool.flwr.federations.local-simulation]
-options.num-supernodes = 10
+options.num-supernodes = 5
