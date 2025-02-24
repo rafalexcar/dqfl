@@ -46,7 +46,7 @@ def ff_information(X):
             mi_matrix.iloc[i, j] = mi_value
             mi_matrix.iloc[j, i] = mi_value  # Symmetric assignment
 
-    # Step 3: Compute the Average Information Score
+    # Compute the Average Information Score
     num_comparisons = (num_features * (num_features - 1)) / 2  # Upper triangle count
     average_info_score = mi_matrix.sum().sum() / (2 * num_comparisons)  # Sum divided by num comparisons
     return average_info_score
