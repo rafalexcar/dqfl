@@ -1,0 +1,133 @@
+Starting Flower ServerApp, config: num_rounds=3, no round_timeout
+
+[INIT]
+Using initial global parameters provided by strategy
+Starting evaluation of initial global parameters
+Evaluation returned no results (`None`)
+
+[ROUND 1]
+configure_fit: strategy sampled 5 clients (out of 5)
+Initialising: RayBackend
+Backend config: {'init_args': {'logging_level': 30, 'log_to_driver': True}, 'client_resources': {'num_cpus': 2, 'num_gpus': 0}, 'actor': {'tensorflow': 0}}
+Constructed ActorPool with: 4 actors
+Using InMemoryState
+aggregate_fit: received 5 results and 0 failures
+configure_evaluate: strategy sampled 5 clients (out of 5)
+aggregate_evaluate: received 5 results and 0 failures
+{"avr_accuracy": 0.6572237960339944}
+
+[ROUND 2]
+configure_fit: strategy sampled 5 clients (out of 5)
+aggregate_fit: received 5 results and 0 failures
+configure_evaluate: strategy sampled 5 clients (out of 5)
+aggregate_evaluate: received 5 results and 0 failures
+{"avr_accuracy": 0.7024662556240626}
+
+[ROUND 3]
+configure_fit: strategy sampled 5 clients (out of 5)
+aggregate_fit: received 5 results and 0 failures
+configure_evaluate: strategy sampled 5 clients (out of 5)
+aggregate_evaluate: received 5 results and 0 failures
+{"avr_accuracy": 0.7664555907348776}
+
+[SUMMARY]
+Run finished 3 round(s) in 32.69s
+	History (loss, distributed):
+		round 1: 1.2204148238755432
+		round 2: 1.616339368787882
+		round 3: 1.66036497887205
+	History (metrics, distributed, fit):
+	{'class_balance': [(1,
+	                    [(2, 0.6239556670188904),
+	                     (1, 0.8471292406320572),
+	                     (4, 0.2102709412574768),
+	                     (3, 0.7356969714164734),
+	                     (0, 0.6242698431015015)]),
+	                   (2,
+	                    [(3, 0.7356969714164734),
+	                     (0, 0.6242698431015015),
+	                     (2, 0.6239556670188904),
+	                     (1, 0.8471292406320572),
+	                     (4, 0.2102709412574768)]),
+	                   (3,
+	                    [(2, 0.6239556670188904),
+	                     (0, 0.6242698431015015),
+	                     (4, 0.2102709412574768),
+	                     (1, 0.8471292406320572),
+	                     (3, 0.7356969714164734)])],
+	 'feature_accuracy': [(1,
+	                       [(2, 0.9478364586830139),
+	                        (1, 0.9385260939598083),
+	                        (4, 0.9324111938476562),
+	                        (3, 0.9358407258987427),
+	                        (0, 0.9367408752441406)]),
+	                      (2,
+	                       [(3, 0.9358407258987427),
+	                        (0, 0.9367408752441406),
+	                        (2, 0.9478364586830139),
+	                        (1, 0.9385260939598083),
+	                        (4, 0.9324111938476562)]),
+	                      (3,
+	                       [(2, 0.9478364586830139),
+	                        (0, 0.9367408752441406),
+	                        (4, 0.9324111938476562),
+	                        (1, 0.9385260939598083),
+	                        (3, 0.9358407258987427)])],
+	 'label_distribution_distance': [(1,
+	                                  [(2, 4124.548217683969),
+	                                   (1, 9592.081578051762),
+	                                   (4, 4382.0167731308375),
+	                                   (3, 1496.5570486954382),
+	                                   (0, 5453.579283369776)]),
+	                                 (2,
+	                                  [(3, 2131.5662832762205),
+	                                   (0, 5660.867320473074),
+	                                   (2, 4394.973244514692),
+	                                   (1, 9711.432480329562),
+	                                   (4, 4637.452190589138)]),
+	                                 (3,
+	                                  [(2, 5121.275747311406),
+	                                   (0, 6241.5618462048415),
+	                                   (4, 5330.819663053703),
+	                                   (1, 10060.993801807055),
+	                                   (3, 3384.5605741366194)])],
+	 'mutual_infor': [(1,
+	                   [(2, -274.6507568359375),
+	                    (1, -229.64596557617188),
+	                    (4, -234.71331787109375),
+	                    (3, -256.09576416015625),
+	                    (0, -274.66717529296875)]),
+	                  (2,
+	                   [(3, -256.09576416015625),
+	                    (0, -274.66717529296875),
+	                    (2, -274.6507568359375),
+	                    (1, -229.64596557617188),
+	                    (4, -234.71331787109375)]),
+	                  (3,
+	                   [(2, -274.6507568359375),
+	                    (0, -274.66717529296875),
+	                    (4, -234.71331787109375),
+	                    (1, -229.64596557617188),
+	                    (3, -256.09576416015625)])],
+	 'num_classes': [(1, [(2, 7), (1, 10), (4, 10), (3, 8), (0, 7)]),
+	                 (2, [(3, 8), (0, 7), (2, 7), (1, 10), (4, 10)]),
+	                 (3, [(2, 7), (0, 7), (4, 10), (1, 10), (3, 8)])],
+	 'num_examples': [(1, [(2, 6726), (1, 24533), (4, 4931), (3, 2911), (0, 8897)]),
+	                  (2, [(3, 2911), (0, 8897), (2, 6726), (1, 24533), (4, 4931)]),
+	                  (3,
+	                   [(2, 6726), (0, 8897), (4, 4931), (1, 24533), (3, 2911)])]}
+	History (metrics, distributed, evaluate):
+	{'avr_accuracy': [(1, 0.6572237960339944),
+	                  (2, 0.7024662556240626),
+	                  (3, 0.7664555907348776)]}
+
+ServerApp finished running.
+ServerApp finished running.
+Triggered stop event for Simulation Engine.
+Terminated 4 actors
+Manually terminating ClientAppActor
+Manually terminating ClientAppActor
+Manually terminating ClientAppActor
+Manually terminating ClientAppActor
+Terminated RayBackend
+Stopping Simulation Engine now.
