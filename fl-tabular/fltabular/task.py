@@ -11,16 +11,17 @@ from sklearn.model_selection import train_test_split
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import OrdinalEncoder, StandardScaler
 from torch.utils.data import DataLoader, TensorDataset
+from flwr.common import Context
 from flwr_datasets.partitioner import IidPartitioner, DirichletPartitioner
 
 fds = None  # Cache FederatedDataset
 
 
-def load_data(partition_id: int, num_partitions: int):
+def load_data(partition_id: int, num_partitions: int, context : Context):
 
     global fds
     if fds is None:
-        partitioner = DirichletPartitioner(num_partitions=num_partitions, partition_by="income", alpha=0.5, seed=42)
+        partitioner = DirichletPartitioner(num_partitions=num_partitions, partition_by="income", alpha=context.run_config["alpha"], seed=42)
         fds = FederatedDataset(
             dataset="scikit-learn/adult-census-income",
             partitioners={"train": partitioner},
@@ -84,13 +85,25 @@ def train(model, train_loader, num_epochs=1):
     criterion = nn.BCELoss()
     optimizer = optim.Adam(model.parameters(), lr=0.001)
     model.train()
+
+    total_loss = 0.0  # Accumulator for total loss
+    num_batches = 0  # Counter for the number of batches
+
     for epoch in range(num_epochs):
         for X_batch, y_batch in train_loader:
             optimizer.zero_grad()
             outputs = model(X_batch)
-            loss = criterion(outputs, y_batch)
+            loss = criterion(outputs, y_batch)  # Calculate batch loss
             loss.backward()
             optimizer.step()
+
+            total_loss += loss.item()  # Add batch loss to total loss
+            num_batches += 1  # Increment batch counter
+
+    # Calculate average loss across all batches
+    avg_loss = total_loss / num_batches if num_batches > 0 else 0.0
+    return avg_loss
+
 
 
 def evaluate(model, test_loader):

@@ -14,7 +14,7 @@ from fltabular.task import (
     train,
 )
 
-def calculate_quality_metrics(loader, calculate_gini : bool=False, calculate_num_unique_classes : bool=True, calculate_avg_mi : bool=False, calculate_avg_mi_f : bool=False, calculate_f_accuracy : bool=False, calculate_label_counts : bool=True, calculate_label_counts_dic : bool=True):
+def calculate_quality_metrics(loader, calculate_gini : bool=True, calculate_num_unique_classes : bool=True, calculate_avg_mi : bool=False, calculate_avg_mi_f : bool=False, calculate_f_accuracy : bool=False, calculate_label_counts : bool=True, calculate_label_counts_dic : bool=True):
     # Define required accumulators
     total_samples = 0  # For label distribution and feature accuracy
     running_feature_accuracy = 0.0  # Sum of feature accuracy (to calculate average later)
@@ -59,8 +59,9 @@ def calculate_quality_metrics(loader, calculate_gini : bool=False, calculate_num
     }
 
 class FlowerClient(NumPyClient):
-    def __init__(self, net, trainloader, testloader):
+    def __init__(self, partition_id, net, trainloader, testloader):
         self.net = net
+        self.partition_id = partition_id
         self.trainloader = trainloader
         self.testloader = testloader
 
@@ -69,8 +70,14 @@ class FlowerClient(NumPyClient):
         train_loss = train(self.net, self.trainloader)
         quality_metrics = calculate_quality_metrics(self.trainloader, calculate_avg_mi=False, calculate_gini=True, calculate_f_accuracy=False, calculate_avg_mi_f=False)
         class_balance = quality_metrics["gini"]
+        if class_balance is None:
+            raise ValueError("class balance is None! Check your fit function.")
         number_of_examples = len(self.trainloader.dataset)
+        if number_of_examples is None:
+            raise ValueError("number of examples is None! Check your fit function.")
         number_of_classes = quality_metrics["num_unique_classes"]
+        if number_of_classes is None:
+            raise ValueError("number of classes is None! Check your fit function.")
 
 
         return (
@@ -80,11 +87,6 @@ class FlowerClient(NumPyClient):
              "class_balance": class_balance,
              "number_of_examples": number_of_examples,
              "number_of_classes": number_of_classes,
-             "avg_mi": avg_mi,
-             "feature_accuracy": feature_accuracy,
-             "label_counts": label_counts,
-             "label_distribution_distance": label_distribution_distance,
-             "avg_ffi": avg_ffi,
              "client_id" : self.partition_id},
         )
 
@@ -92,17 +94,23 @@ class FlowerClient(NumPyClient):
     def evaluate(self, parameters, config):
         set_weights(self.net, parameters)
         loss, accuracy = evaluate(self.net, self.testloader)
+        if loss is None:
+            raise ValueError("loss is None! Check your evaluate function.")
+        if accuracy is None:
+            raise ValueError("accuracy is None! Check your evaluate function.")
         return loss, len(self.testloader), {"accuracy": accuracy}
 
 
 def client_fn(context: Context):
     partition_id = context.node_config["partition-id"]
+    num_partitions = context.node_config["num-partitions"]
+    local_epochs = context.run_config["local-epochs"]
 
     train_loader, test_loader = load_data(
-        partition_id=partition_id, num_partitions=context.node_config["num-partitions"]
+        partition_id=partition_id, num_partitions=num_partitions, context=context
     )
     net = IncomeClassifier()
-    return FlowerClient(net, train_loader, test_loader).to_client()
+    return FlowerClient(partition_id=partition_id, net=net, trainloader=train_loader, testloader=test_loader).to_client()
 
 
 app = ClientApp(client_fn=client_fn)
